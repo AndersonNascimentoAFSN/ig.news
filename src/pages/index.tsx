@@ -1,4 +1,5 @@
-import { GetServerSideProps } from "next";
+// import { GetServerSideProps } from "next";
+import { GetStaticProps } from "next";
 import Head from "next/head";
 import Image from "next/image";
 import avatar from "../../public/images/avatar.svg";
@@ -39,10 +40,15 @@ export default function Home({ product }: IHomeProps) {
   );
 }
 
-export const getServerSideProps: GetServerSideProps = async () => {
+// export const getServerSideProps: GetServerSideProps = async () => {
+//   const price = await stripe.prices.retrieve("price_1LIlKHHS5GzY8uCNI4ccIzWM", {
+//     expand: ["product"],
+//   }); // server-side-rendering
+export const getStaticProps: GetStaticProps = async () => { // static site generation
   const price = await stripe.prices.retrieve("price_1LIlKHHS5GzY8uCNI4ccIzWM", {
     expand: ["product"],
   });
+  const twentyFourHours = 60 * 60 * 24;
 
   const product = {
     priceId: price.id,
@@ -56,5 +62,6 @@ export const getServerSideProps: GetServerSideProps = async () => {
     props: {
       product,
     },
+    revalidate: twentyFourHours,
   };
 };
